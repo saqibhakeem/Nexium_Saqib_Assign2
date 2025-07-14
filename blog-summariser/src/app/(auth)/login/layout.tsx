@@ -16,7 +16,6 @@ export default function RootLayout({
     <>
       <header>
         <div className="navbar bg-[#020202] shadow-sm absolute px-6">
-          <div>
             <div className="flex items-center gap-4">
               <span className="text-2xl font-semibold text-[#F0E7D8]">
                 BlinkBlog
@@ -25,7 +24,6 @@ export default function RootLayout({
             <div className="ml-auto flex items-center gap-4">
               <Button variant="nav">Register</Button>
             </div>
-          </div>
         </div>
       </header>
 

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     'Login to BlinkBlog to access your personalized blog summarization experience. Quickly summarize blogs in simple words, including summaries in Urdu. Enjoy AI-powered, distraction-free reading that is fast, clear, and effortless.',
 };
 
-export default function LoginLayout({
+export default function RegisterLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -23,9 +23,9 @@ export default function LoginLayout({
               </span>
             </div>
             <div className="ml-auto flex items-center gap-4">
-            <Link href={'/register'}>
-              <Button variant="nav" className='cursor-pointer'>Register</Button>
-            </Link>
+              <Link href='/login'>
+              <Button variant="nav" className='cursor-pointer'>Login</Button>
+              </Link>
             </div>
         </div>
       </header>

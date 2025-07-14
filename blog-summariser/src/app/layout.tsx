@@ -37,14 +37,15 @@ export default function RootLayout({
                 BlinkBlog
               </span>
             </div>
-            <div className="ml-auto flex items-center gap-4">
-              <Link href="/login" >
-              
-              <Button variant="nav" className='cursor-pointer'>
-              Login
+            <div className="ml-auto flex items-center gap-2">
+              <Link href="/login">
+                <Button variant="nav" className="cursor-pointer">
+                  Login
                 </Button>
               </Link>
-              <Button variant="nav">Register</Button>
+              <Link href="/register" >
+                <Button variant="nav" className="cursor-pointer">Register</Button>
+              </Link>
             </div>
           </div>
         </header>

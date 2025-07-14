@@ -1,22 +1,10 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
-import './globals.css';
 import { Button } from '@/components/ui/button';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
-
 export const metadata: Metadata = {
-  title: 'BlinkBlog - Blog Summarizer',
+  title: 'Login - BlinkBlog',
   description:
-    'Summarize any blog instantly, in simple words — and even get the summary in Urdu! AI-powered, distraction-free reading. Fast. Clear. Effortless',
+    'Login to BlinkBlog to access your personalized blog summarization experience. Quickly summarize blogs in simple words, including summaries in Urdu. Enjoy AI-powered, distraction-free reading that is fast, clear, and effortless.',
 };
 
 export default function RootLayout({
@@ -25,12 +13,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <header>
-          <div className="navbar bg-[#020202] shadow-sm absolute px-6">
+    <>
+      <header>
+        <div className="navbar bg-[#020202] shadow-sm absolute px-6">
+          <div>
             <div className="flex items-center gap-4">
               <span className="text-2xl font-semibold text-[#F0E7D8]">
                 BlinkBlog
@@ -40,10 +26,10 @@ export default function RootLayout({
               <Button variant="nav">Register</Button>
             </div>
           </div>
-        </header>
+        </div>
+      </header>
 
-        {children}
-      </body>
-    </html>
+      {children}
+    </>
   );
 }

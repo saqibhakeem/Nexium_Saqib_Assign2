@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -32,21 +30,12 @@ export default function RootLayout({
       >
         <header>
           <div className="navbar bg-[#020202] shadow-sm absolute px-6">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center ">
               <span className="text-2xl font-semibold text-[#F0E7D8]">
                 BlinkBlog
               </span>
             </div>
-            <div className="ml-auto flex items-center gap-2">
-              <Link href="/login">
-                <Button variant="nav" className="cursor-pointer">
-                  Login
-                </Button>
-              </Link>
-              <Link href="/register" >
-                <Button variant="nav" className="cursor-pointer">Register</Button>
-              </Link>
-            </div>
+
           </div>
         </header>
 

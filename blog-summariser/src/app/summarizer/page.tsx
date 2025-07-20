@@ -17,7 +17,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import Link from 'next/link';
-import { extractiveSummary } from '../api/summarize/route';
+//import { extractiveSummary } from '../api/summarize/route';
 
 export default function SummarizerPage() {
   const [url, setUrl] = useState('');
@@ -55,12 +55,19 @@ export default function SummarizerPage() {
         return;
       }
 
-      const summaryResult = await extractiveSummary(result.content, 6);
-      const summary = summaryResult.summary;
+      const summaryResult = await fetch('/api/summarize', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ text: result.content }),
+});
+
+const summary = await summaryResult.json();
 
       await new Promise((r) => setTimeout(r, 1000));
       setBlogTitle(result.title || 'Blog Title');
-      setSummary(summary);
+      setSummary(summary.summary);
 
       setLoading(false);
     } catch (err) {

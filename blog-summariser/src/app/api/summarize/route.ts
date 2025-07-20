@@ -1,51 +1,79 @@
-import { NextRequest, NextResponse } from "next/server";
-import { extract } from "@extractus/article-extractor";
 
-// 🔧 Cleans up messy metadata from article content
-function cleanText(text: string): string {
-  return text
-    .replace(/^\s*\d+\s*min read[\s\-–—]*/i, "")               // removes "11 min read"
-    .replace(/^\s*\d+\s+(hours|days|weeks|months)\s+ago/i, "") // removes "2 days ago"
-    .replace(/From the Maps of .*?Review/i, "")                // specific medium junk
-    .replace(/follow the map/i, "")                            // remove random headers
-    .replace(/<[^>]*>/g, "")                                   // strip any HTML tags
-    .replace(/\n{2,}/g, "\n")                                  // normalize blank lines
-    .replace(/\s+/g, " ")                                      // normalize spaces
-    .trim();
-}
 
-// ✨ Basic summary: return first few meaningful sentences
-function summarizeText(text: string, maxSentences = 3): string {
-  const sentences = text.split(/[.!?]\s+/).filter(Boolean);
-  return sentences.slice(0, maxSentences).join(". ") + ".";
-}
 
-export async function POST(req: NextRequest) {
+export async function extractiveSummary(content: string, maxSentences: number = 5) {
   try {
-    const { url } = await req.json();
+    // Clean and split into sentences
+    const sentences = content
+      .replace(/\s+/g, ' ')
+      .split(/[.!?]+/)
+      .map(s => s.trim())
+      .filter(s => s.length > 20 && s.length < 200) // Filter reasonable sentence lengths
+      .slice(0, 50); // Limit to first 50 sentences for performance
 
-    if (!url) {
-      return NextResponse.json({ error: "URL is required" }, { status: 400 });
+    if (sentences.length === 0) {
+      return {
+        summary: 'Unable to extract meaningful sentences from the content.',
+        method: 'extractive',
+        success: false
+      };
     }
 
-    // 📦 Extract article data
-    const article = await extract(url);
+    // Simple scoring: prefer sentences with common important words
+    const importantWords = [
+      'important', 'key', 'main', 'significant', 'conclusion', 'result',
+      'finding', 'discover', 'reveal', 'show', 'prove', 'demonstrate',
+      'first', 'second', 'third', 'finally', 'however', 'therefore',
+      'because', 'since', 'although', 'while', 'moreover', 'furthermore'
+    ];
 
-    if (!article?.content) {
-      return NextResponse.json({ error: "No content found" }, { status: 404 });
-    }
+    const scoredSentences = sentences.map((sentence, index) => {
+      let score = 0;
+      
+      // Position scoring (earlier sentences often more important)
+      score += (sentences.length - index) / sentences.length * 2;
+      
+      // Length scoring (prefer medium-length sentences)
+      const idealLength = 100;
+      const lengthScore = 1 - Math.abs(sentence.length - idealLength) / idealLength;
+      score += lengthScore;
+      
+      // Important words scoring
+      const lowerSentence = sentence.toLowerCase();
+      importantWords.forEach(word => {
+        if (lowerSentence.includes(word)) {
+          score += 1;
+        }
+      });
+      
+      // Avoid sentences with too many numbers or special characters
+      const specialCharRatio = (sentence.match(/[^\w\s]/g) || []).length / sentence.length;
+      if (specialCharRatio > 0.3) score -= 2;
 
-    const raw = article.content || "";
-    const cleaned = cleanText(raw);
-    const summary = summarizeText(cleaned);
-
-    return NextResponse.json({
-      title: article.title,
-      summary,
-      fullText: cleaned,
+      return { sentence, score, index };
     });
-  } catch (err) {
-    console.error("❌ Summarization failed:", err);
-    return NextResponse.json({ error: "Failed to summarize blog" }, { status: 500 });
+
+    // Select top sentences
+    const topSentences = scoredSentences
+      .sort((a, b) => b.score - a.score)
+      .slice(0, maxSentences)
+      .sort((a, b) => a.index - b.index) // Restore original order
+      .map(item => item.sentence);
+
+      
+   
+
+    return {
+      summary: topSentences.join('. ') + '.',
+      method: 'extractive',
+      success: true
+    };
+  } catch (error) {
+    console.error('Extractive summarization error:', error);
+    return {
+      summary: 'Error occurred during summarization.',
+      method: 'extractive',
+      success: false
+    };
   }
 }

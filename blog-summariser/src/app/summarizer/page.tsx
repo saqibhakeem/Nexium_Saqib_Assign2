@@ -64,7 +64,7 @@ export default function SummarizerPage() {
 
       setLoading(false);
     } catch (err) {
-      setError('An error occurred while processing the blog.');
+      setError(`An error occurred while processing the blog. ${err}`);
       setLoading(false);
     }
   }
@@ -91,7 +91,7 @@ export default function SummarizerPage() {
         setError(result.error || 'Translation failed.');
       }
     } catch (err) {
-      setError('Translation service is unavailable.');
+      setError(`Translation service is unavailable.${err}`);
     } finally {
       setTranslating(false);
     }
